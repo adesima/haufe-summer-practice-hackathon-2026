@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShowUp2Move - Login</title>
+    <link rel="stylesheet" href="style/home-page.css"> <style>
+        .login-container { max-width: 400px; margin: 100px auto; padding: 20px; text-align: center; border: 1px solid #ddd; border-radius: 15px; }
+        .login-container input { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box;}
+        .login-btn { background-color: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; width: 100%; }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <h1>ShowUp2Move</h1>
+        <p>Intră în cont pentru a te mișca!</p>
+        <form id="loginForm">
+            <input type="text" id="identifier" placeholder="Username sau Email" required>
+            <input type="password" id="password" placeholder="Parolă" required>
+            <button type="submit" class="login-btn">Login</button>
+        </form>
+        <p id="error-msg" style="color: red; display: none;">Date incorecte!</p>
+    </div>
+
+    <script src="script/database.js"></script>
+    <script src="script/db_manager.js"></script>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const iden = document.getElementById('identifier').value;
+            const pass = document.getElementById('password').value;
+            
+            const user = authenticateUser(iden, pass);
+            
+            if (user) {
+                // Salvăm ID-ul userului logat pentru a-l recunoaște în celelalte pagini
+                localStorage.setItem("currentUser", JSON.stringify(user));
+                // Redirecționăm către Home
+                window.location.href = "pages/home.html";
+            } else {
+                document.getElementById('error-msg').style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

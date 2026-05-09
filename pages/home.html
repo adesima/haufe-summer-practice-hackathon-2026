@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <title>Home - ShowUp2Move</title>
+</head>
+<body>
+    <header style="background: #eee; padding: 20px; display: flex; justify-content: space-between;">
+        <h2 id="welcome-msg">Salut, Vizitator!</h2>
+        <button onclick="logout()">Logout</button>
+    </header>
+
+    <main>
+        <h3>Meciurile tale vor apărea aici.</h3>
+    </main>
+
+    <script>
+        // Citim cine este logat
+        const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+        if (!currentUser) {
+            // Dacă nu e logat nimeni, dă-l afară la login
+            window.location.href = "../index.html";
+        } else {
+            // Afișăm numele userului
+            document.getElementById('welcome-msg').innerText = `Salut, ${currentUser.name}!`;
+        }
+
+        function logout() {
+            localStorage.removeItem("currentUser");
+            window.location.href = "../index.html";
+        }
+    </script>
+</body>
+</html>
