@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Groups - ShowUp2Move</title>
+    <link rel="stylesheet" href="../style/navbar.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        .groups-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .group-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .group-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .group-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .group-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #28a745;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 20px;
+            margin-right: 15px;
+        }
+
+        .group-title {
+            flex: 1;
+        }
+
+        .group-name {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 3px;
+        }
+
+        .group-captain {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .group-info {
+            margin: 15px 0;
+            padding: 15px 0;
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            font-size: 14px;
+        }
+
+        .info-label {
+            color: #666;
+        }
+
+        .info-value {
+            color: #333;
+            font-weight: bold;
+        }
+
+        .members-section {
+            margin: 15px 0;
+        }
+
+        .members-title {
+            font-size: 13px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .member-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .member-badge {
+            background-color: #e8f5e9;
+            color: #28a745;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+        }
+
+        .join-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .join-btn:hover {
+            background-color: #218838;
+        }
+
+        .join-btn.joined {
+            background-color: #6c757d;
+            cursor: default;
+        }
+
+        .no-groups {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .no-groups p {
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        @media (max-width: 768px) {
+            main {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .groups-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="navbar-container"></div>
+
+    <main>
+        <h1>Groups</h1>
+        <div id="groups-container" class="groups-container"></div>
+    </main>
+
+    <script src="../script/database.js"></script>
+    <script src="../script/db_manager.js"></script>
+    <script src="../script/navbar.js"></script>
+
+    <script>
+        const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+        if (!currentUser) {
+            window.location.href = "../index.html";
+        } else {
+            loadGroups();
+        }
+
+        function loadGroups() {
+            const events = JSON.parse(localStorage.getItem("events")) || [];
+            const sports = JSON.parse(localStorage.getItem("sports")) || [];
+            const users = JSON.parse(localStorage.getItem("users")) || [];
+            const groupsContainer = document.getElementById('groups-container');
+
+            if (events.length === 0) {
+                groupsContainer.innerHTML = `
+                    <div class="no-groups">
+                        <p>No groups available at the moment.</p>
+                        <a href="matches.html" style="color: #28a745;">Browse matches instead</a>
+                    </div>
+                `;
+                return;
+            }
+
+            groupsContainer.innerHTML = events.map(event => {
+                const sport = sports.find(s => s.id === event.sportId);
+                const captain = users.find(u => u.id === event.captainId);
+                const isJoined = event.players.includes(currentUser.id);
+                const sportName = sport ? sport.name : 'Unknown Sport';
+                const sportEmoji = getEmoji(sportName);
+
+                return `
+                    <div class="group-card">
+                        <div class="group-header">
+                            <div class="group-avatar">${sportEmoji}</div>
+                            <div class="group-title">
+                                <div class="group-name">${sportName}</div>
+                                <div class="group-captain">by ${captain ? captain.name : 'Unknown'}</div>
+                            </div>
+                        </div>
+
+                        <div class="group-info">
+                            <div class="info-row">
+                                <span class="info-label">Location:</span>
+                                <span class="info-value">${event.location}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Time:</span>
+                                <span class="info-value">${event.time}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Players:</span>
+                                <span class="info-value">${event.players.length}/${sport ? sport.maxPlayers : '?'}</span>
+                            </div>
+                        </div>
+
+                        <div class="members-section">
+                            <div class="members-title">Players (${event.players.length})</div>
+                            <div class="member-list">
+                                ${event.players.slice(0, 3).map(playerId => {
+                                    const player = users.find(u => u.id === playerId);
+                                    return player ? `<div class="member-badge">${player.name}</div>` : '';
+                                }).join('')}
+                                ${event.players.length > 3 ? `<div class="member-badge">+${event.players.length - 3} more</div>` : ''}
+                            </div>
+                        </div>
+
+                        <button class="join-btn ${isJoined ? 'joined' : ''}" 
+                                onclick="${isJoined ? '' : `joinGroup('${event.id}')`}"
+                                ${isJoined ? 'disabled' : ''}>
+                            ${isJoined ? 'Already Joined' : 'Join Group'}
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function joinGroup(eventId) {
+            const events = JSON.parse(localStorage.getItem("events")) || [];
+            const event = events.find(e => e.id === eventId);
+
+            if (event && !event.players.includes(currentUser.id)) {
+                event.players.push(currentUser.id);
+                localStorage.setItem("events", JSON.stringify(events));
+                loadGroups();
+                alert('Successfully joined the group!');
+            }
+        }
+
+        function getEmoji(sportName) {
+            const emojis = {
+                'Football': '⚽',
+                'Tennis': '🎾',
+                'Basketball': '🏀',
+                'Volleyball': '🏐',
+                'Badminton': '🏸',
+                'Table Tennis': '🏓'
+            };
+            return emojis[sportName] || '🏆';
+        }
+    </script>
+</body>
+</html>

@@ -12,8 +12,8 @@ const usersDb = [
     id: "u001",
     name: "Alex Popescu", // Utilizatorul tău principal
     description: "I love football and go out on weekends.",
-    username: "alex.popescu",
-    password: "Alex1234!",
+    username: "aaa",
+    password: "aaa!",
     email: "alex.popescu@example.com",
     preferences: ["s01", "s03"], // ID-urile de la fotbal și baschet
     skillLevel: "Intermediate",

@@ -1,0 +1,132 @@
+/* Mobile-first approach - Navbar at bottom */
+.navbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: #ffffff;
+  border-top: 1px solid #e0e0e0;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+  padding: 10px 0;
+  z-index: 1000;
+  height: 70px;
+}
+
+.nav-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: #666;
+  flex: 1;
+  padding: 10px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+/* Mobile: Hide text labels, show icons only */
+.nav-label {
+  display: none;
+  font-size: 12px;
+  margin-top: 5px;
+  color: inherit;
+}
+
+.nav-icon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+/* Hover effect */
+.nav-link:hover {
+  color: #28a745;
+  opacity: 0.8;
+}
+
+/* Active/pressed effect */
+.nav-link:active {
+  transform: scale(0.95);
+}
+
+/* Active link styling */
+.nav-link.active {
+  color: #28a745;
+}
+
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: 5px;
+  width: 6px;
+  height: 6px;
+  background-color: #28a745;
+  border-radius: 50%;
+}
+
+/* Web version - Navbar at top */
+@media (min-width: 768px) {
+  .navbar {
+    position: fixed;
+    top: 0;
+    bottom: auto;
+    left: 0;
+    right: 0;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0 30px;
+    height: 70px;
+    border-top: none;
+    border-bottom: 1px solid #e0e0e0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .nav-link {
+    flex-direction: row;
+    padding: 15px 20px;
+    margin: 0 10px;
+    flex: none;
+  }
+
+  /* Web: Show text labels, hide icons */
+  .nav-label {
+    display: inline;
+    margin-top: 0;
+    margin-left: 8px;
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  .nav-icon {
+    display: none;
+  }
+
+  /* Active link underline for web */
+  .nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background-color: #28a745;
+    border-radius: 0;
+  }
+}
+
+/* Adjust main content on web to account for top navbar */
+@media (min-width: 768px) {
+  body {
+    padding-top: 70px;
+  }
+}
+
+/* Adjust main content on mobile to account for bottom navbar */
+body {
+  padding-bottom: 70px;
+}

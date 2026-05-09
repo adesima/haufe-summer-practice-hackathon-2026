@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matches - ShowUp2Move</title>
+    <link rel="stylesheet" href="../style/navbar.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        #matches-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .match-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .match-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .match-sport {
+            display: inline-block;
+            background-color: #28a745;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .match-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .match-detail {
+            margin: 8px 0;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .match-detail strong {
+            color: #333;
+        }
+
+        .match-location {
+            color: #0066cc;
+            margin-bottom: 10px;
+        }
+
+        .match-time {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        .match-players {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .join-btn {
+            margin-top: 15px;
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .join-btn:hover {
+            background-color: #218838;
+        }
+
+        .no-matches {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 16px;
+        }
+
+        .no-matches p {
+            margin-bottom: 20px;
+        }
+
+        .update-profile-btn {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        @media (max-width: 768px) {
+            main {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            #matches-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="navbar-container"></div>
+
+    <main>
+        <h1>Compatible Matches</h1>
+        <div id="matches-list"></div>
+    </main>
+
+    <script src="../script/database.js"></script>
+    <script src="../script/db_manager.js"></script>
+    <script src="../script/navbar.js"></script>
+
+    <script>
+        // Check if user is logged in
+        const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+        if (!currentUser) {
+            // Redirect to login if not authenticated
+            window.location.href = "../index.html";
+        } else {
+            // Load and display compatible matches
+            loadMatches();
+        }
+
+        function loadMatches() {
+            const matchesList = document.getElementById('matches-list');
+            
+            // Get compatible events based on user's sport preferences
+            const compatibleMatches = getCompatibleEvents(currentUser.id);
+
+            if (!compatibleMatches || compatibleMatches.length === 0) {
+                matchesList.innerHTML = `
+                    <div class="no-matches">
+                        <p>We couldn't find any matches at the moment. Try adding more sports to your profile!</p>
+                        <a href="profile.html" class="update-profile-btn">Update Profile</a>
+                    </div>
+                `;
+                return;
+            }
+
+            // Get sports data for display
+            const sports = JSON.parse(localStorage.getItem("sports")) || [];
+            const users = JSON.parse(localStorage.getItem("users")) || [];
+
+            // Render match cards
+            matchesList.innerHTML = compatibleMatches.map(event => {
+                const sport = sports.find(s => s.id === event.sportId);
+                const captain = users.find(u => u.id === event.captainId);
+                const sportName = sport ? sport.name : 'Unknown Sport';
+
+                return `
+                    <div class="match-card">
+                        <div class="match-sport">${sportName}</div>
+                        <h3>${sportName} Match</h3>
+                        <div class="match-detail">
+                            <strong>Location:</strong> <span class="match-location">${event.location}</span>
+                        </div>
+                        <div class="match-detail">
+                            <strong>Time:</strong> <span class="match-time">${event.time}</span>
+                        </div>
+                        <div class="match-detail">
+                            <strong>Captain:</strong> ${captain ? captain.name : 'Unknown'}
+                        </div>
+                        <div class="match-players">
+                            Players: ${event.players.length}/${sport ? sport.maxPlayers : '?'}
+                        </div>
+                        <button class="join-btn" onclick="joinMatch('${event.id}')">Join Match</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function joinMatch(eventId) {
+            const events = JSON.parse(localStorage.getItem("events")) || [];
+            const event = events.find(e => e.id === eventId);
+
+            if (event && !event.players.includes(currentUser.id)) {
+                event.players.push(currentUser.id);
+                localStorage.setItem("events", JSON.stringify(events));
+                alert(`Successfully joined the match!`);
+                // Reload matches
+                loadMatches();
+            } else {
+                alert('You are already in this match or it does not exist.');
+            }
+        }
+    </script>
+</body>
+</html>

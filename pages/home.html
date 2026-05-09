@@ -1,29 +1,271 @@
 <!DOCTYPE html>
-<html lang="ro">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - ShowUp2Move</title>
+    <link rel="stylesheet" href="../style/navbar.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        header {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            padding: 40px 20px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .welcome-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .welcome-card h2 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        .welcome-card p {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .upcoming-events {
+            margin-top: 40px;
+        }
+
+        .upcoming-events h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        .event-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .event-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .event-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .event-sport {
+            display: inline-block;
+            background-color: #28a745;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .event-item h4 {
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .event-detail {
+            color: #666;
+            font-size: 14px;
+            margin: 5px 0;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 8px 16px;
+            background-color: rgba(255, 255, 255, 0.3);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 30px 15px;
+            }
+
+            header h1 {
+                font-size: 22px;
+            }
+
+            main {
+                padding: 20px 15px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .event-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-    <header style="background: #eee; padding: 20px; display: flex; justify-content: space-between;">
-        <h2 id="welcome-msg">Salut, Vizitator!</h2>
-        <button onclick="logout()">Logout</button>
+    <div id="navbar-container"></div>
+
+    <header>
+        <h1 id="welcome-msg">Welcome!</h1>
+        <p>Find and join sports matches in your area</p>
+        <button class="logout-btn" onclick="logout()">Logout</button>
     </header>
 
     <main>
-        <h3>Meciurile tale vor apărea aici.</h3>
+        <div class="welcome-card">
+            <h2>Get Started</h2>
+            <p>Discover matches that match your favorite sports and skill level.</p>
+            <div class="action-buttons">
+                <a href="matches.html" class="btn btn-primary">Browse Matches</a>
+                <a href="profile.html" class="btn btn-secondary">Edit Profile</a>
+            </div>
+        </div>
+
+        <div class="upcoming-events">
+            <h3>Your Upcoming Matches</h3>
+            <div id="user-events" class="event-grid"></div>
+        </div>
     </main>
 
+    <script src="./script/database.js"></script>
+    <script src="./script/db_manager.js"></script>
+    <script src="./script/navbar.js"></script>
+
     <script>
-        // Citim cine este logat
+        // Check if user is logged in
         const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
         if (!currentUser) {
-            // Dacă nu e logat nimeni, dă-l afară la login
+            // Redirect to login if not authenticated
             window.location.href = "../index.html";
         } else {
-            // Afișăm numele userului
-            document.getElementById('welcome-msg').innerText = `Salut, ${currentUser.name}!`;
+            // Display personalized greeting
+            document.getElementById('welcome-msg').innerText = `Welcome, ${currentUser.name}!`;
+            loadUserEvents();
+        }
+
+        function loadUserEvents() {
+            const events = JSON.parse(localStorage.getItem("events")) || [];
+            const sports = JSON.parse(localStorage.getItem("sports")) || [];
+            const userEventsContainer = document.getElementById('user-events');
+
+            // Get events where current user is a player
+            const userEvents = events.filter(e => e.players.includes(currentUser.id));
+
+            if (userEvents.length === 0) {
+                userEventsContainer.innerHTML = '<p style="text-align: center; color: #666;">No upcoming matches. <a href="matches.html">Browse matches</a> to join!</p>';
+                return;
+            }
+
+            userEventsContainer.innerHTML = userEvents.map(event => {
+                const sport = sports.find(s => s.id === event.sportId);
+                const sportName = sport ? sport.name : 'Unknown Sport';
+
+                return `
+                    <div class="event-item">
+                        <div class="event-sport">${sportName}</div>
+                        <h4>${sportName}</h4>
+                        <div class="event-detail"><strong>Location:</strong> ${event.location}</div>
+                        <div class="event-detail"><strong>Time:</strong> ${event.time}</div>
+                        <div class="event-detail"><strong>Players:</strong> ${event.players.length}</div>
+                    </div>
+                `;
+            }).join('');
         }
 
         function logout() {

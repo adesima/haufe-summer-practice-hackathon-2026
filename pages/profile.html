@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - ShowUp2Move</title>
+    <link rel="stylesheet" href="../style/navbar.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        main {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .profile-header {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 20px;
+        }
+
+        .profile-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .profile-info {
+            color: #666;
+            font-size: 14px;
+            margin: 5px 0;
+        }
+
+        .profile-section {
+            margin-bottom: 25px;
+        }
+
+        .profile-section h3 {
+            color: #333;
+            font-size: 16px;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #28a745;
+        }
+
+        .profile-detail {
+            color: #666;
+            font-size: 14px;
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .sports-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .sport-badge {
+            display: inline-block;
+            background-color: #28a745;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .edit-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-bottom: 10px;
+        }
+
+        .edit-btn:hover {
+            background-color: #218838;
+        }
+
+        .logout-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background-color: #5a6268;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding-bottom: 70px;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 40px auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: black;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #28a745;
+            box-shadow: 0 0 5px rgba(40, 167, 69, 0.3);
+        }
+
+        .sport-checkboxes {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .checkbox-item input {
+            width: auto;
+            margin-right: 8px;
+            cursor: pointer;
+        }
+
+        .checkbox-item label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: normal;
+        }
+
+        .save-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .save-btn:hover {
+            background-color: #218838;
+        }
+
+        @media (max-width: 768px) {
+            main {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .modal-content {
+                margin: 100px 20px 100px 20px;
+            }
+
+            .sport-checkboxes {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="navbar-container"></div>
+
+    <main>
+        <h1>Your Profile</h1>
+        
+        <div class="profile-card">
+            <div class="profile-header">
+                <div class="profile-name" id="profile-name"></div>
+                <div class="profile-info" id="profile-username"></div>
+                <div class="profile-info" id="profile-email"></div>
+            </div>
+
+            <div class="profile-section">
+                <h3>About You</h3>
+                <div class="profile-detail">
+                    <span class="detail-label">Description:</span>
+                    <p id="profile-description"></p>
+                </div>
+                <div class="profile-detail">
+                    <span class="detail-label">Skill Level:</span> <span id="profile-skill"></span>
+                </div>
+            </div>
+
+            <div class="profile-section">
+                <h3>Sports Preferences</h3>
+                <div id="sports-preferences" class="sports-list"></div>
+            </div>
+
+            <div class="profile-section">
+                <h3>Stats</h3>
+                <div class="profile-detail">
+                    <span class="detail-label">Joined Events:</span> <span id="joined-count">0</span>
+                </div>
+                <div class="profile-detail">
+                    <span class="detail-label">Available Today:</span> <span id="availability"></span>
+                </div>
+            </div>
+
+            <button class="edit-btn" onclick="openEditModal()">Edit Profile</button>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </main>
+
+    <!-- Edit Profile Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEditModal()">&times;</span>
+            <div class="modal-header">Edit Profile</div>
+            
+            <form id="editForm">
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="edit-description" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Skill Level</label>
+                    <select id="edit-skill" required>
+                        <option value="Beginner">Beginner</option>
+                        <option value="Intermediate">Intermediate</option>
+                        <option value="Advanced">Advanced</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Favorite Sports</label>
+                    <div class="sport-checkboxes" id="sports-checkboxes"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="edit-availability">
+                        Available Today
+                    </label>
+                </div>
+
+                <button type="submit" class="save-btn">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="../script/database.js"></script>
+    <script src="../script/db_manager.js"></script>
+    <script src="../script/navbar.js"></script>
+
+    <script>
+        const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+        if (!currentUser) {
+            window.location.href = "../index.html";
+        } else {
+            loadProfile();
+        }
+
+        function loadProfile() {
+            const sports = JSON.parse(localStorage.getItem("sports")) || [];
+            const events = JSON.parse(localStorage.getItem("events")) || [];
+
+            // Display user info
+            document.getElementById('profile-name').innerText = currentUser.name;
+            document.getElementById('profile-username').innerText = `@${currentUser.username}`;
+            document.getElementById('profile-email').innerText = currentUser.email;
+            document.getElementById('profile-description').innerText = currentUser.description;
+            document.getElementById('profile-skill').innerText = currentUser.skillLevel;
+
+            // Display sport preferences
+            const preferredSports = currentUser.preferences.map(sportId => {
+                const sport = sports.find(s => s.id === sportId);
+                return sport ? sport.name : '';
+            }).filter(name => name);
+
+            document.getElementById('sports-preferences').innerHTML = preferredSports
+                .map(sport => `<div class="sport-badge">${sport}</div>`)
+                .join('');
+
+            // Count joined events
+            const joinedEvents = events.filter(e => e.players.includes(currentUser.id));
+            document.getElementById('joined-count').innerText = joinedEvents.length;
+
+            // Display availability
+            document.getElementById('availability').innerText = 
+                currentUser.isAvailableToday === null ? 'Not set' : 
+                (currentUser.isAvailableToday ? 'Yes' : 'No');
+
+            // Setup edit form
+            setupEditForm(sports);
+        }
+
+        function setupEditForm(sports) {
+            document.getElementById('edit-description').value = currentUser.description;
+            document.getElementById('edit-skill').value = currentUser.skillLevel;
+            document.getElementById('edit-availability').checked = currentUser.isAvailableToday === true;
+
+            // Create sport checkboxes
+            const checkboxesContainer = document.getElementById('sports-checkboxes');
+            checkboxesContainer.innerHTML = sports.map(sport => `
+                <div class="checkbox-item">
+                    <input 
+                        type="checkbox" 
+                        id="sport-${sport.id}" 
+                        value="${sport.id}"
+                        ${currentUser.preferences.includes(sport.id) ? 'checked' : ''}
+                    >
+                    <label for="sport-${sport.id}">${sport.name}</label>
+                </div>
+            `).join('');
+        }
+
+        function openEditModal() {
+            document.getElementById('editModal').style.display = 'block';
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        document.getElementById('editForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Get selected sports
+            const selectedSports = Array.from(document.querySelectorAll('.checkbox-item input:checked'))
+                .map(checkbox => checkbox.value);
+
+            // Update user data
+            currentUser.description = document.getElementById('edit-description').value;
+            currentUser.skillLevel = document.getElementById('edit-skill').value;
+            currentUser.preferences = selectedSports;
+            currentUser.isAvailableToday = document.getElementById('edit-availability').checked;
+
+            // Save to localStorage
+            const users = JSON.parse(localStorage.getItem("users")) || [];
+            const userIndex = users.findIndex(u => u.id === currentUser.id);
+            if (userIndex !== -1) {
+                users[userIndex] = currentUser;
+                localStorage.setItem("users", JSON.stringify(users));
+                localStorage.setItem("currentUser", JSON.stringify(currentUser));
+            }
+
+            // Reload profile
+            loadProfile();
+            closeEditModal();
+            alert('Profile updated successfully!');
+        });
+
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('editModal');
+            if (event.target === modal) {
+                closeEditModal();
+            }
+        });
+
+        function logout() {
+            localStorage.removeItem("currentUser");
+            window.location.href = "../index.html";
+        }
+    </script>
+</body>
+</html>

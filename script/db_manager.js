@@ -17,5 +17,20 @@ function authenticateUser(identifier, password) {
     );
 }
 
+// Funcție pentru a obține evenimentele compatibile cu preferințele sportive ale userului
+function getCompatibleEvents(userId) {
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+    const events = JSON.parse(localStorage.getItem("events")) || [];
+    
+    // Găsim userul
+    const user = users.find(u => u.id === userId);
+    if (!user || !user.preferences || user.preferences.length === 0) {
+        return [];
+    }
+    
+    // Filtrăm evenimentele care sunt pentru sporturile din preferințele userului
+    return events.filter(event => user.preferences.includes(event.sportId));
+}
+
 // Inițializăm imediat
 initDatabase();
